@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aiza's Bus Story</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for a classic storybook look */
+        body {
+            font-family: 'Georgia', serif; /* More classic font */
+            background-color: #fbf8f0; /* Soft, warm off-white background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Ensure the main story container is responsive and centered */
+        #story-container {
+            max-width: 700px;
+            width: 100%;
+            background-color: #fffdfa; /* Slightly warmer white for the story box */
+            border-radius: 18px; /* Slightly less rounded corners for a classic frame */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.05); /* Stronger outer shadow, subtle inner shadow */
+            padding: 35px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            border: 8px solid #a1887f; /* Thicker, earthy brown border for a frame look */
+        }
+
+        /* Style for the story image */
+        #story-image {
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 10px; /* Slightly less rounded corners for the image */
+            margin-bottom: 20px;
+            border: 4px solid #a1887f; /* Matching border with the container */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Subtle shadow for image depth */
+        }
+
+        /* Style for the story text */
+        #story-text {
+            font-size: 1.35rem;
+            color: #263238;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-weight: 600; /* Slightly bolder text for readability */
+        }
+
+        /* Container for decision buttons */
+        #choices-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px; /* Slightly reduced space between buttons */
+        }
+
+        /* Style for decision buttons (tiles) */
+        .choice-button {
+            flex: 1 1 calc(50% - 18px); /* Adjusting based on new gap */
+            max-width: 320px;
+            padding: 18px 30px;
+            background-color: #dcedc8; /* Soft pastel green button */
+            color: #4e342e; /* Dark brown text for contrast */
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px; /* Slightly less rounded corners for buttons */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Softer button shadow */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .choice-button:hover {
+            background-color: #c5e1a5; /* Darker green on hover */
+            transform: translateY(-3px); /* Less pronounced lift effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
+        }
+
+        .choice-button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 640px) {
+            #story-container {
+                padding: 25px;
+                gap: 15px;
+                border-radius: 10px; /* Consistent smaller radius */
+            }
+            #story-text {
+                font-size: 1.2rem;
+            }
+            .choice-button {
+                flex: 1 1 100%;
+                max-width: 100%;
+                padding: 15px 20px;
+                font-size: 1.1rem;
+                border-radius: 8px; /* Consistent smaller radius */
+            }
+            #story-image {
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="story-container">
+        <!-- The title will now be dynamically inserted by JavaScript -->
+        <img id="story-image" src="" alt="Story illustration">
+        <p id="story-text"></p>
+        <div id="choices-container">
+            <!-- Decision buttons will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Define the story data with different segments, images, and choices.
+        // Each 'id' corresponds to a unique part of the story.
+        const storyData = {
+            "coverPage": {
+                text: "An interactive story", // This will act as the subtitle
+                image: "images/aiza-cover.jpg", // Placeholder for your cover image
+                title: "A day in the bus", // New property for the main title
+                choices: [
+                    { text: "Start Story", nextId: "start" }
+                ]
+            },
+            "start": {
+                text: "Little Aiza got on the big yellow bus. She found an empty seat and sat down. It was a comfy seat!",
+                image: "images/storybegin.png", // This is the correct relative path
+                alt: "A cartoon girl with a red scarf sitting on a blue bus seat on a yellow school bus.",
+                choices: [
+                    { text: "Next", nextId: "oldLadyArrives" }
+                ]
+            },
+            "oldLadyArrives": {
+                text: "Soon, a kind old lady with a big bag got on the bus. All the seats were full, so she stood near Aiza.",
+                image: "images/oldlady.png", // Using the newly provided image
+                alt: "A cartoon of a kind old lady with a big bag standing in a crowded bus aisle.",
+                choices: [
+                    { text: "What will Aiza do?", nextId: "decisionPoint" }
+                ]
+            },
+            "decisionPoint": {
+                text: "The old lady looked tired. Aiza had a comfy seat. What should Aiza do?",
+                image: "images/aizathinking.png", // Reusing the old lady image for the decision point
+                alt: "A cartoon of a kind old lady with a big bag standing in a crowded bus aisle.",
+                choices: [
+                    { text: "Give her seat", nextId: "aizaGivesSeat" },
+                    { text: "Keep her seat", nextId: "aizaKeepsSeat" }
+                ]
+            },
+            "aizaGivesSeat": {
+                text: "Aiza stood up with a big smile. She said, 'You can have my seat, please!'",
+                image: "images/aizagivesseat.png", // Using the newly provided image
+                alt: "Aiza, the 6-year-old girl with a red scarf, standing up and offering her bus seat to the old lady, who is smiling gratefully.",
+                choices: [
+                    { text: "See what happens", nextId: "ladyThanks" }
+                ]
+            },
+            "ladyThanks": {
+                text: "The old lady's face lit up! 'Oh, thank you, dear! You are so kind!' she said, beaming.",
+                image: "images/ladythanks.png", // Using the newly provided image
+                alt: "A close-up cartoon of the old lady's face, beaming with gratitude and warmth, looking at Aiza. Aiza, with her red scarf, is smiling back, feeling good about her action.",
+                choices: [
+                    { text: "How Aiza feels", nextId: "aizaHappy" }
+                ]
+            },
+            "aizaHappy": {
+                text: "Aiza felt a warm, happy feeling inside. Helping someone felt really good! Alhamdulillah!",
+                image: "images/aizahappyend.jpg", // Using the newly provided image
+                alt: "Aiza, the girl with a red scarf, with a happy, bubbly expression, radiating warmth.",
+                choices: [
+                    { text: "The End (Happy Feeling)", nextId: "endGood" }
+                ]
+            },
+            "aizaKeepsSeat": {
+                text: "Aiza stayed in her seat, looking out the window at the trees. The old lady sighed softly and held the rail.",
+                image: "images/aizaquiet.png", // Using the newly provided image
+                alt: "Aiza, the girl with a red scarf, sitting in her bus seat, looking out the window. The old lady is standing nearby, looking tired.",
+                choices: [
+                    { text: "How Aiza feels", nextId: "aizaQuiet" }
+                ]
+            },
+            "aizaQuiet": {
+                text: "Aiza felt a little quiet inside as the bus drove on. She kept watching the trees.",
+                image: "images/aizaquiet.png", // Using the newly provided image
+                alt: "Aiza, the girl with a red scarf, looking thoughtful or a little quiet.",
+                choices: [
+                    { text: "The End (Quiet Moment)", nextId: "endQuiet" }
+                ]
+            },
+            "endGood": {
+                text: "Masha'allah! What a super day for Aiza, full of kindness! She felt proud of what she did.",
+                image: "images/aizahappyend.jpg", // Updated to use the new image
+                alt: "Aiza, the girl with a red scarf, with a happy, bubbly expression, radiating warmth.",
+                choices: [
+                    { text: "Play Again", nextId: "coverPage" }
+                ]
+            },
+            "endQuiet": {
+                text: "Aiza didn't feel good. Aiza thought about her choice. Maybe next time, she would do something different. Insha'allah!",
+                image: "images/aizaregret.png", // Reusing the quiet Aiza image
+                alt: "Aiza, the girl with a red scarf, looking thoughtful or a little quiet.",
+                choices: [
+                    { text: "Play Again", nextId: "coverPage" }
+                ]
+            }
+        };
+
+        // Get references to the HTML elements
+        const storyImage = document.getElementById('story-image');
+        const storyText = document.getElementById('story-text');
+        const choicesContainer = document.getElementById('choices-container');
+
+        // We'll add a new element to hold the main title dynamically
+        let storyTitleElement = document.getElementById('story-main-title');
+        if (!storyTitleElement) {
+            storyTitleElement = document.createElement('h2');
+            storyTitleElement.id = 'story-main-title';
+            storyTitleElement.classList.add('text-4xl', 'font-extrabold', 'text-gray-800', 'mb-6', 'mt-2'); // Tailwind classes for big font
+            document.getElementById('story-container').prepend(storyTitleElement); // Add it before the image
+        }
+
+        /**
+         * Renders a specific part of the story based on its ID.
+         * Updates the image, text, and decision buttons.
+         * @param {string} storyId - The ID of the story segment to render.
+         */
+        function renderStory(storyId) {
+            const currentStory = storyData[storyId];
+
+            // Update the main title if present, otherwise hide it
+            if (currentStory.title) {
+                storyTitleElement.textContent = currentStory.title;
+                storyTitleElement.style.display = 'block'; // Make sure it's visible
+            } else {
+                storyTitleElement.style.display = 'none'; // Hide if no specific title for this segment
+            }
+
+            // Update the image source and alt text
+            // Ensure the contentFetchId is correctly formed for the browser to load it
+            storyImage.src = currentStory.image;
+            storyImage.alt = currentStory.alt;
+
+            // Update the story text
+            storyText.textContent = currentStory.text;
+
+            // Clear any existing choice buttons
+            choicesContainer.innerHTML = '';
+
+            // Create new buttons for each choice
+            if (currentStory.choices && currentStory.choices.length > 0) {
+                currentStory.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.textContent = choice.text;
+                    button.classList.add('choice-button'); // Add Tailwind classes for styling
+
+                    // Add an event listener to the button
+                    button.addEventListener('click', () => {
+                        renderStory(choice.nextId); // Load the next story segment
+                    });
+                    choicesContainer.appendChild(button);
+                });
+            }
+        }
+
+        // Initial render when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStory('coverPage'); // Start with the cover page
+        });
+    </script>
+</body>
+</html>
